@@ -6,7 +6,7 @@ def main():
     Entry point for the application
     """
 
-    print("Hello, World!")
+    print("Starting Machine Learning pipeline!")
 
     return None
 
