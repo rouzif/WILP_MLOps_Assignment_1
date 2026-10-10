@@ -1,7 +1,7 @@
 
 data:
   load_from_saved_file: False
-  saved_file_path: 'data/input_data.csv'
+  input_data_path: 'data/input_data.csv'
   save_loaded_data: True
 
 variables:

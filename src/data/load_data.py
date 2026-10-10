@@ -1,4 +1,5 @@
 import pandas as pd
+from typing import Optional
 from ucimlrepo import fetch_ucirepo
 from src.utils.logger import get_logger
 from src.utils.config import load_config
@@ -6,15 +7,15 @@ from src.utils.config import load_config
 
 logger = get_logger(__name__)
 
-def load_data(config: dict) -> None:
+def load_data(load_from_saved_file: bool, saved_file_path: str = '') -> pd.DataFrame:
 
 
-    logger.info("Loading data...")
+    logger.info("\n\nLoading data...")
 
     # Loading data
-    if config['data']['load_from_saved_file']:
+    if load_from_saved_file:
 
-        df = pd.read_csv(config['data']['load_from_saved_file'])
+        df = pd.read_csv(saved_file_path)
 
     else:
 
@@ -29,17 +30,26 @@ def load_data(config: dict) -> None:
 
     logger.info("Data loading complete.")
 
-    # Saving data
-    save_file_path = config['data']['saved_file_path']
-    if not config['data']['load_from_saved_file'] and config['data']['save_loaded_data']:
-        logger.info(f"Saving data...")
-        df.to_csv(save_file_path, index=False)
-        logger.info(f"Data saved to {save_file_path}.")
-
     return df
+
+
+def save_data(df: pd.DataFrame, output_path: str) -> None:
+
+    logger.info(f"Saving data...")
+    df.to_csv(output_path, index=False)
+    logger.info(f"Data saved to {output_path}.")
 
 
 if __name__ == "__main__":
 
     cfg = load_config()
-    df = load_data(cfg)
+    df = load_data(
+        load_from_saved_file=cfg['data']['load_from_saved_file'],
+        saved_file_path=cfg['data']['input_data_path']
+    )
+
+    if cfg['data']['save_loaded_data']:
+        save_data(
+            df=df,
+            output_path=cfg['data']['input_data_path'],
+        )
