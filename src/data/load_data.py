@@ -22,17 +22,24 @@ def load_data(config: dict) -> None:
         df = heart_disease.data.features
         df['heart_disease'] = heart_disease.data.targets
 
-    logger.info(f"Variables: {', '.join(df.columns)}")
+    # Logging important stats
+    logger.info(f"Number of rows: {df.shape[0]}.")
+    logger.info(f"Number of columns: {df.shape[1]}.")
+    logger.info(f"Variables: {', '.join(df.columns)}.")
 
     logger.info("Data loading complete.")
 
     # Saving data
+    save_file_path = config['data']['saved_file_path']
     if not config['data']['load_from_saved_file'] and config['data']['save_loaded_data']:
-        df.to_csv("data/processed/cleaned.csv", index=False)
+        logger.info(f"Saving data...")
+        df.to_csv(save_file_path, index=False)
+        logger.info(f"Data saved to {save_file_path}.")
 
-    return None
+    return df
+
 
 if __name__ == "__main__":
 
     cfg = load_config()
-    load_data(cfg)
+    df = load_data(cfg)

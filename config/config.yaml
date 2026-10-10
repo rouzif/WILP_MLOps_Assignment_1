@@ -1,5 +1,8 @@
 
 data:
   load_from_saved_file: False
-  saved_file_path: ''
+  saved_file_path: 'data/input_data.csv'
   save_loaded_data: True
+
+variables:
+  target: 'heart_disease'
