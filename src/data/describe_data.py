@@ -10,10 +10,12 @@ def describe_data(df: pd.DataFrame) -> dict[str, list[str]]:
 
     returning a dictionary of categorized columns.
     """
-    logger.info("\n\n=== Starting Data Description ===")
+    logger.info(f"\n\n")
+    logger.info("=== Starting Data Description ===")
 
     # 1. Log data type for each column
-    logger.info("\n--- Column Data Types ---")
+    logger.info(f"\n")
+    logger.info("--- Column Data Types ---")
     for col, dtype in df.dtypes.items():
         logger.info(f"Column: '{col}' | DataType: {dtype}")
 
@@ -26,7 +28,8 @@ def describe_data(df: pd.DataFrame) -> dict[str, list[str]]:
     }
 
     # 2. Categorise columns and log category for each
-    logger.info("\n--- Column Categorization ---")
+    logger.info(f"\n")
+    logger.info("--- Column Categorization ---")
     for col in df.columns:
         n_unique = df[col].nunique(dropna=True)
         is_numeric = pd.api.types.is_numeric_dtype(df[col])
@@ -48,7 +51,8 @@ def describe_data(df: pd.DataFrame) -> dict[str, list[str]]:
         )
 
     # 3. Log min, 25%, median, 75%, max for numeric columns
-    logger.info("\n--- Summary Statistics for Numeric Columns ---")
+    logger.info(f"\n")
+    logger.info("--- Summary Statistics for Numeric Columns ---")
     numeric_cols = (
         column_categories["numeric-low-cardinality"]
         + column_categories["numeric-distributed"]
@@ -69,8 +73,9 @@ def describe_data(df: pd.DataFrame) -> dict[str, list[str]]:
         logger.info("No numeric columns found.")
 
     # 4. Log % distribution across categories for columns with < 5 unique entries
+    logger.info(f"\n")
     logger.info(
-        "\n--- Percentage Distribution for Low-Cardinality Columns (< 5 Unique"
+        "--- Percentage Distribution for Low-Cardinality Columns (< 5 Unique"
         " Entries) ---"
     )
     low_cardinality_cols = [
@@ -87,7 +92,7 @@ def describe_data(df: pd.DataFrame) -> dict[str, list[str]]:
     else:
         logger.info("No columns with fewer than 5 unique values found.")
 
-    logger.info("\n=== Finished Data Description ===")
+    logger.info("=== Finished Data Description ===\n")
 
     # Return column category dict
     return column_categories

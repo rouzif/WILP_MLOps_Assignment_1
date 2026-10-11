@@ -1,4 +1,4 @@
-from src.data.load_data import load_data
+from src.data.load_data import run_data_load_pipeline
 from src.data.describe_data import describe_data
 from src.utils.logger import get_logger
 from src.utils.config import load_config
@@ -18,13 +18,10 @@ def main():
     cfg = load_config()
 
     # Loading data
-    df = load_data(
-        load_from_saved_file=cfg['data']['load_from_saved_file'],
-        saved_file_path=cfg['data']['input_data_path']
-    )
+    df = run_data_load_pipeline(cfg)
 
     # Describe data
-    df = describe_data(
+    column_types = describe_data(
         df=df,
     )
 
