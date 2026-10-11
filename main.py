@@ -1,5 +1,7 @@
+import warnings
 from src.data.load_data import run_data_load_pipeline
 from src.data.describe_data import run_data_description_pipeline
+from src.data.visualize import run_visualization_pipeline
 from src.data.missing_values import run_missing_value_pipeline
 from src.data.encode import run_encoding_pipeline
 from src.data.scaling import run_scaling_pipeline
@@ -16,6 +18,7 @@ def main():
     """
 
     logger.info("Starting Machine Learning pipeline!\n\n")
+    warnings.filterwarnings("ignore")
 
     # Loading config
     cfg = load_config()
@@ -25,6 +28,9 @@ def main():
 
     # Describe data
     column_types = run_data_description_pipeline(cfg, df)
+
+    # Visualize data
+    run_visualization_pipeline(cfg, df, column_types)
 
     # Missing value imputation
     df, missing_imputation = run_missing_value_pipeline(cfg, df, column_types)

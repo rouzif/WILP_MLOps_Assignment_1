@@ -4,6 +4,7 @@ data:
   save_loaded_data: True
   input_data_path: 'data/input_data.csv'
   column_category_path: 'data/column_category.json'
+  visualisation_directory: 'data/visualisation/'
   missing_imputation_path: 'data/missing_imputation.json'
   missing_imputed_data_path: 'data/missing_imputed_data.csv'
   column_category_encoded_path: 'data/column_category_encoded.json'
@@ -13,4 +14,4 @@ data:
   scaled_data_path: 'data/scaled_data.csv'
 
 variables:
-  target: 'heart_disease'
+  target: 'heart_disease_flag'
