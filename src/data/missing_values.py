@@ -11,7 +11,6 @@ def impute_missing_values(df: pd.DataFrame, column_types: dict) -> pd.DataFrame:
     """Imputes missing values in a dataframe according to column category and missing percentage rules."""
     df = df.copy()
 
-    logger.info("\n\n")
     logger.info("=== Starting Missing Values Imputation ===")
 
     # Invert the dictionary to map each column to its category
@@ -93,6 +92,9 @@ def impute_missing_values(df: pd.DataFrame, column_types: dict) -> pd.DataFrame:
 
 def run_missing_value_pipeline(cfg: dict, df: pd.DataFrame, column_types: dict) -> tuple[pd.DataFrame, dict[str, list[str]]]:
 
+    logger.info("\n\n")
+    logger.info("=== Running Missing Value Imputation Pipeline ===")
+
     # Imputing missing values
     df, missing_imputation = impute_missing_values(df, column_types)
 
@@ -101,6 +103,7 @@ def run_missing_value_pipeline(cfg: dict, df: pd.DataFrame, column_types: dict) 
     with open(cfg['data']['missing_imputation_path'], "w", encoding="utf-8") as f:
         json.dump(missing_imputation, f, indent=4)
 
+    logger.info("=== Finished Missing Value Pipeline Execution ===")
     return df, missing_imputation
 
 

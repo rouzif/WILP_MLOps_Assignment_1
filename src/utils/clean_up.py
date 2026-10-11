@@ -16,7 +16,9 @@ def clean_up() -> None:
         config['data']['input_data_path'],
         config['data']['column_category_path'],
         config['data']['missing_imputation_path'],
-        config['data']['missing_imputed_data_path']
+        config['data']['missing_imputed_data_path'],
+        config['data']['column_category_encoded_path'],
+        config['data']['encoded_data_path']
     ]
 
     for path_str in paths:

@@ -6,6 +6,8 @@ data:
   column_category_path: 'data/column_category.json'
   missing_imputation_path: 'data/missing_imputation.json'
   missing_imputed_data_path: 'data/missing_imputed_data.csv'
+  column_category_encoded_path: 'data/column_category_encoded.json'
+  encoded_data_path: 'data/encoded_data.csv'
 
 variables:
   target: 'heart_disease'

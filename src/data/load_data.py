@@ -29,7 +29,7 @@ def load_data(load_from_saved_file: bool, saved_file_path: str = '') -> pd.DataF
     logger.info(f"Number of columns: {df.shape[1]}.")
     logger.info(f"Variables: {', '.join(df.columns)}.")
 
-    logger.info("Data loading complete.\n")
+    logger.info("Data loading complete.")
 
     return df
 
@@ -38,7 +38,7 @@ def save_data(df: pd.DataFrame, output_path: str) -> None:
 
     logger.info(f"Saving data...")
     df.to_csv(output_path, index=False)
-    logger.info(f"Data saved to {output_path}.\n")
+    logger.info(f"Data saved to {output_path}.")
 
 
 def refactor_data(df: pd.DataFrame) -> None:
@@ -54,6 +54,9 @@ def refactor_data(df: pd.DataFrame) -> None:
 
 def run_data_load_pipeline(cfg: dict) -> pd.DataFrame:
 
+    logger.info("\n\n")
+    logger.info("=== Running Data Loading Pipeline ===")
+
     df = load_data(
         load_from_saved_file=cfg['data']['load_from_saved_file'],
         saved_file_path=cfg['data']['input_data_path']
@@ -68,6 +71,8 @@ def run_data_load_pipeline(cfg: dict) -> pd.DataFrame:
             df=df,
             output_path=cfg['data']['input_data_path'],
         )
+
+    logger.info("=== Finished Data Loading Pipeline Execution ===")
 
     return df
 

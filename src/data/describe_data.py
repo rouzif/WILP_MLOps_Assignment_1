@@ -11,11 +11,9 @@ def describe_data(df: pd.DataFrame) -> dict[str, list[str]]:
 
     returning a dictionary of categorized columns.
     """
-    logger.info(f"\n\n")
     logger.info("=== Starting Data Description ===")
 
     # 1. Log data type for each column
-    logger.info(f"\n")
     logger.info("--- Column Data Types ---")
     for col, dtype in df.dtypes.items():
         logger.info(f"Column: '{col}' | DataType: {dtype}")
@@ -29,7 +27,6 @@ def describe_data(df: pd.DataFrame) -> dict[str, list[str]]:
     }
 
     # 2. Categorise columns and log category for each
-    logger.info(f"\n")
     logger.info("--- Column Categorization ---")
     for col in df.columns:
         n_unique = df[col].nunique(dropna=True)
@@ -52,7 +49,6 @@ def describe_data(df: pd.DataFrame) -> dict[str, list[str]]:
         )
 
     # 3. Log min, 25%, median, 75%, max for numeric columns
-    logger.info(f"\n")
     logger.info("--- Summary Statistics for Numeric Columns ---")
     numeric_cols = (
         column_categories["numeric-low-cardinality"]
@@ -74,7 +70,6 @@ def describe_data(df: pd.DataFrame) -> dict[str, list[str]]:
         logger.info("No numeric columns found.")
 
     # 4. Log % distribution across categories for columns with < 5 unique entries
-    logger.info(f"\n")
     logger.info(
         "--- Percentage Distribution for Low-Cardinality Columns (< 5 Unique"
         " Entries) ---"
@@ -93,7 +88,7 @@ def describe_data(df: pd.DataFrame) -> dict[str, list[str]]:
     else:
         logger.info("No columns with fewer than 5 unique values found.")
 
-    logger.info("=== Finished Data Description ===\n")
+    logger.info("=== Finished Data Description ===")
 
     # Return column category dict
     return column_categories
@@ -101,12 +96,17 @@ def describe_data(df: pd.DataFrame) -> dict[str, list[str]]:
 
 def run_data_description_pipeline(cfg: dict, df: pd.DataFrame) -> dict[str, list[str]]:
 
+    logger.info("\n\n")
+    logger.info("=== Running Data Description Pipeline ===")
+
     # Getting descriptions and column category
     column_categories = describe_data(df)
 
     # Writing column category
     with open(cfg['data']['column_category_path'], "w", encoding="utf-8") as f:
         json.dump(column_categories, f, indent=4)
+
+    logger.info("=== Finished Data Description Execution ===")
 
     return column_categories
 
