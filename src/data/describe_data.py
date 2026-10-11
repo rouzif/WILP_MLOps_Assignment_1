@@ -99,6 +99,18 @@ def describe_data(df: pd.DataFrame) -> dict[str, list[str]]:
     return column_categories
 
 
+def run_data_description_pipeline(cfg: dict, df: pd.DataFrame) -> dict[str, list[str]]:
+
+    # Getting descriptions and column category
+    column_categories = describe_data(df)
+
+    # Writing column category
+    with open(cfg['data']['column_category_path'], "w", encoding="utf-8") as f:
+        json.dump(column_categories, f, indent=4)
+
+    return column_categories
+
+
 if __name__ == "__main__":
 
     # Loading config
@@ -108,10 +120,5 @@ if __name__ == "__main__":
     df = pd.read_csv(cfg["data"]["input_data_path"])
 
     # Getting descriptions and column category
-    column_categories = describe_data(df)
+    column_categories = run_data_description_pipeline(cfg, df)
 
-    # Writing column category
-    with open(cfg['data']['column_category_path'], "w", encoding="utf-8") as f:
-        json.dump(column_categories, f, indent=4)
-
-    logger.info(f"Categorized columns mapping: {column_categories}")

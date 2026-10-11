@@ -1,10 +1,11 @@
 
 data:
   load_from_saved_file: False
+  save_loaded_data: True
   input_data_path: 'data/input_data.csv'
   column_category_path: 'data/column_category.json'
+  missing_imputation_path: 'data/missing_imputation.json'
   missing_imputed_data_path: 'data/missing_imputed_data.csv'
-  save_loaded_data: True
 
 variables:
   target: 'heart_disease'
