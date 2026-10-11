@@ -8,6 +8,9 @@ data:
   missing_imputed_data_path: 'data/missing_imputed_data.csv'
   column_category_encoded_path: 'data/column_category_encoded.json'
   encoded_data_path: 'data/encoded_data.csv'
+  scaling_params_path: 'data/scaling_params.json'
+  column_category_scaled_path: 'data/column_category_scaled.json'
+  scaled_data_path: 'data/scaled_data.csv'
 
 variables:
   target: 'heart_disease'

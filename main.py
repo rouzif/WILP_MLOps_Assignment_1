@@ -2,6 +2,7 @@ from src.data.load_data import run_data_load_pipeline
 from src.data.describe_data import run_data_description_pipeline
 from src.data.missing_values import run_missing_value_pipeline
 from src.data.encode import run_encoding_pipeline
+from src.data.scaling import run_scaling_pipeline
 from src.utils.logger import get_logger
 from src.utils.config import load_config
 
@@ -30,6 +31,9 @@ def main():
 
     # Encoding
     df, column_types = run_encoding_pipeline(cfg, df, column_types)
+
+    # Scaling
+    df, column_types, scaling_params = run_scaling_pipeline(cfg, df, column_types)
 
     logger.info("Machine Learning pipeline completed successfully!")
 
