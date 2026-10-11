@@ -16,7 +16,7 @@ sns.set_theme(style="whitegrid")
 def visualize_data(
     df: pd.DataFrame, column_types: dict, target_variable: str, output_dir: Path
 ) -> None:
-    """Generates univariate and bivariate visualizations and saves them to the configured directory."""
+    """Generates univariate, bivariate, and correlation heatmap visualizations and saves them to the configured directory."""
     df = df.copy()
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -136,6 +136,42 @@ def visualize_data(
                 logger.info(
                     f"Saved target percentage bar chart for '{col}' -> '{plot_path}'"
                 )
+
+    # -------------------------------------------------------------------------
+    # 3. CORRELATION HEATMAP
+    # -------------------------------------------------------------------------
+    logger.info("--- Generating Correlation Heatmap ---")
+
+    # Combine all numerical columns (distributed + low cardinality + target)
+    all_numeric_cols = list(
+        set(numeric_dist_cols + numeric_low_cols + ([target_variable] if target_variable in df.columns else []))
+    )
+    valid_numeric_cols = [col for col in all_numeric_cols if col in df.columns and pd.api.types.is_numeric_dtype(df[col])]
+
+    if len(valid_numeric_cols) > 1:
+        plt.figure(figsize=(10, 8))
+        corr_matrix = df[valid_numeric_cols].corr()
+
+        sns.heatmap(
+            corr_matrix,
+            annot=True,
+            fmt=".2f",
+            cmap="coolwarm",
+            vmin=-1,
+            vmax=1,
+            square=True,
+            linewidths=0.5,
+            cbar_kws={"shrink": 0.8},
+        )
+        plt.title("Correlation Heatmap (Numeric Variables & Target)", fontsize=14, fontweight="bold")
+        plt.tight_layout()
+
+        heatmap_path = output_dir / "correlation_heatmap.png"
+        plt.savefig(heatmap_path, dpi=300)
+        plt.close()
+        logger.info(f"Saved correlation heatmap -> '{heatmap_path}'")
+    else:
+        logger.warning("Insufficient numeric variables present to create a correlation heatmap.")
 
     logger.info("=== Finished Data Visualization ===")
 
