@@ -43,8 +43,10 @@ def save_data(df: pd.DataFrame, output_path: str) -> None:
 
 def refactor_data(df: pd.DataFrame) -> None:
 
+    # Handling target variable
     logger.info(f"Refactoring data...")
     df['heart_disease_flag'] = np.where(df['heart_disease'] > 0, 1, 0)
+    df = df.loc[~df['heart_disease_flag'].isna()]
     df = df.drop(columns=['heart_disease'])
 
     return df

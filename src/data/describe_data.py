@@ -1,4 +1,5 @@
 import pandas as pd
+import json
 from src.utils.config import load_config
 from src.utils.logger import get_logger
 
@@ -99,7 +100,18 @@ def describe_data(df: pd.DataFrame) -> dict[str, list[str]]:
 
 
 if __name__ == "__main__":
+
+    # Loading config
     cfg = load_config()
+
+    # Loading data
     df = pd.read_csv(cfg["data"]["input_data_path"])
-    categories = describe_data(df)
-    logger.info(f"Categorized columns mapping: {categories}")
+
+    # Getting descriptions and column category
+    column_categories = describe_data(df)
+
+    # Writing column category
+    with open(cfg['data']['column_category_path'], "w", encoding="utf-8") as f:
+        json.dump(column_categories, f, indent=4)
+
+    logger.info(f"Categorized columns mapping: {column_categories}")
