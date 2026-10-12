@@ -24,6 +24,10 @@ def clean_up() -> None:
         config["data"]["column_category_scaled_path"],
         config["data"]["scaling_params_path"],
         config["data"]["scaled_data_path"],
+        config["data"]["encoding_scheme_path"],
+        config["data"]["train_data_path"],
+        config["data"]["test_data_path"],
+        config["data"]["preprocessor_path"]
     ]
 
     for path_str in paths:

@@ -2,10 +2,10 @@ import joblib
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 
-from src.data.describe_data import describe_data
-from src.data.encode import encode_data
-from src.data.missing_values import impute_missing_values
-from src.data.scaling import scale_data
+from src.data.describe_data import run_data_description_pipeline
+from src.data.encode import run_encoding_pipeline
+from src.data.missing_values import run_missing_value_pipeline
+from src.data.scaling import run_scaling_pipeline
 from src.utils.config import load_config
 from src.utils.logger import get_logger
 
@@ -28,31 +28,31 @@ class DataPreprocessor(BaseEstimator, TransformerMixin):
         self.encoding_scheme_ = {}
         self.is_fitted_ = False
 
-    def fit(self, X: pd.DataFrame, y=None):
+    def fit(self, X: pd.DataFrame, cfg: dict):
         """Learns preprocessing parameters strictly from the training data."""
         logger.info("=== Fitting DataPreprocessor ===")
         X_copy = X.copy()
 
         # Get column types
         logger.info("Describing dataset column types...")
-        self.column_types = describe_data(X_copy)
+        self.column_types = run_data_description_pipeline(cfg, X_copy)
 
         # Impute missing values & learn imputation state
         logger.info("Fitting missing value imputation logic...")
-        X_copy, self.imputation_params_ = impute_missing_values(
-            X_copy, self.column_types
+        X_copy, self.imputation_params_ = run_missing_value_pipeline(
+            cfg, X_copy, self.column_types
         )
 
         # Fit Encoding logic
         logger.info("Fitting categorical encoding logic...")
-        X_copy, self.column_types_updated_, self.encoding_scheme_ = encode_data(
-            X_copy, self.column_types
+        X_copy, self.column_types_updated_, self.encoding_scheme_ = run_encoding_pipeline(
+            cfg, X_copy, self.column_types
         )
 
         # Fit Scaling logic & learn scaling parameters (mean, std)
         logger.info("Fitting numerical feature scaling logic...")
-        X_copy, self.column_types_updated_, self.scaling_params_ = scale_data(
-            X_copy, self.column_types_updated_
+        X_copy, self.column_types_updated_, self.scaling_params_ = run_scaling_pipeline(
+            cfg, X_copy, self.column_types_updated_
         )
 
         self.is_fitted_ = True
@@ -70,11 +70,14 @@ class DataPreprocessor(BaseEstimator, TransformerMixin):
         X_trans = X.copy()
 
         # Apply learned Imputation
+        logger.info("Imputing missing values...")
         for col, fill_val in self.imputation_params_.items():
             if col in X_trans.columns:
                 X_trans[col] = X_trans[col].fillna(fill_val)
+        logger.info("Missing value imputation complete!")
 
         # Apply Encoding based on self.encoding_scheme_
+        logger.info("Encoding categorical columns...")
         for col, encoded_cats in self.encoding_scheme_.items():
             if col in X_trans.columns:
                 for cat in encoded_cats:
@@ -82,8 +85,10 @@ class DataPreprocessor(BaseEstimator, TransformerMixin):
                     X_trans[dummy_col_name] = (X_trans[col] == cat).astype(int)
 
                 X_trans = X_trans.drop(columns=[col])
+        logger.info("Encoding categorical columns complete!")
 
         # Apply learned Scaling using pre-calculated mean and std
+        logger.info("Scaling columns...")
         for col, params in self.scaling_params_.items():
             scaled_col_name = f"{col}_scaled"
             mean_val = params["mean"]
@@ -96,6 +101,7 @@ class DataPreprocessor(BaseEstimator, TransformerMixin):
                     X_trans[scaled_col_name] = (
                         X_trans[col] - mean_val
                     ) / std_val
+        logger.info("Scaling columns complete!")
 
         logger.info("=== Data Transformation Completed ===")
         return X_trans
@@ -107,7 +113,7 @@ def run_preprocessor(cfg: dict, df: pd.DataFrame) -> tuple([pd.DataFrame, DataPr
     logger.info("=== Running Data Preprocessor Pipeline ===")
 
     preprocessor = DataPreprocessor()
-    df_processed = preprocessor.fit_transform(df)
+    df_processed = preprocessor.fit_transform(df, cfg)
 
     # Save fitted preprocessor object
     preprocessor_path = cfg["data"]["preprocessor_path"]
