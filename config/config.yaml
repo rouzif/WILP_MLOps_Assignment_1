@@ -12,6 +12,13 @@ data:
   scaling_params_path: 'data/scaling_params.json'
   column_category_scaled_path: 'data/column_category_scaled.json'
   scaled_data_path: 'data/scaled_data.csv'
+  encoding_scheme_path: 'data/encoding_scheme.json'
+  train_data_path: 'data/train_data.csv'
+  test_data_path: 'data/test_data.csv'
+  preprocessor_path: 'data/preprocessor.joblib'
 
 variables:
   target: 'heart_disease_flag'
+
+partition:
+  test_ratio: 0.3

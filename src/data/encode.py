@@ -8,10 +8,11 @@ logger = get_logger(__name__)
 
 def encode_data(
     df: pd.DataFrame, column_types: dict
-) -> tuple[pd.DataFrame, dict]:
-    """One-hot encodes numerical-low-cardinality and categorical columns (dropping the last category)
+) -> tuple[pd.DataFrame, dict, dict[str, list]]:
+    """One-hot encodes numerical-low-cardinality and categorical columns (dropping the last category),
 
-    and updates the column_types dictionary with encoded column names.
+    updates the column_types dictionary with encoded column names, and returns
+    the encoding scheme mapping.
     """
     df = df.copy()
 
@@ -27,6 +28,7 @@ def encode_data(
     )
 
     encoded_columns_list = []
+    encoding_scheme = {}
 
     for col in cols_to_encode:
         if col in df.columns:
@@ -35,18 +37,27 @@ def encode_data(
                 df[col], prefix=col, drop_first=False, dtype=int
             )
 
+            # Record categories being encoded before dropping the last category
+            categories = [
+                cat
+                for cat in df[col].dropna().unique().tolist()
+            ]
+
             # Drop the last column to satisfy 'drop last' rule
             if dummies.shape[1] > 1:
                 dropped_col = dummies.columns[-1]
                 dummies = dummies.iloc[:, :-1]
+                encoded_cats = categories[:-1]
                 logger.info(
                     f"Encoded column '{col}' -> Created {dummies.shape[1]} dummy column(s), dropped last category '{dropped_col}'"
                 )
             else:
+                encoded_cats = categories
                 logger.info(
                     f"Encoded column '{col}' -> Created 1 dummy column"
                 )
 
+            encoding_scheme[col] = encoded_cats
             encoded_columns_list.extend(dummies.columns.tolist())
 
             # Concatenate encoded dummy columns and drop original column
@@ -65,24 +76,37 @@ def encode_data(
     logger.info(f"Updated DataFrame shape post-encoding: {df.shape}")
     logger.info("=== Finished Data Encoding ===")
 
-    return df, column_types
+    return df, column_types, encoding_scheme
 
 
 def run_encoding_pipeline(
     cfg: dict, df: pd.DataFrame, column_types: dict
-) -> tuple[pd.DataFrame, dict]:
+) -> tuple[pd.DataFrame, dict, dict]:
     """Executes the encoding step, saves outputs to configured paths, and returns the results."""
     logger.info("\n\n")
     logger.info("=== Running Feature Encoding Pipeline ===")
 
     # Call encode_data function
-    df_encoded, column_types_updated = encode_data(df, column_types)
+    df_encoded, column_types_updated, encoding_scheme = encode_data(
+        df, column_types
+    )
 
     # Save the column_types dictionary returned to config['data']['column_category_encoded_path']
     encoded_cat_path = cfg["data"]["column_category_encoded_path"]
     with open(encoded_cat_path, "w", encoding="utf-8") as f:
         json.dump(column_types_updated, f, indent=4)
-    logger.info(f"Saved updated column categories JSON to: '{encoded_cat_path}'")
+    logger.info(
+        f"Saved updated column categories JSON to: '{encoded_cat_path}'"
+    )
+
+    # Optionally save encoding scheme if configured
+    encoding_scheme_path = cfg["data"].get("encoding_scheme_path")
+    if encoding_scheme_path:
+        with open(encoding_scheme_path, "w", encoding="utf-8") as f:
+            json.dump(encoding_scheme, f, indent=4)
+        logger.info(
+            f"Saved encoding scheme mapping JSON to: '{encoding_scheme_path}'"
+        )
 
     # Save dataframe returned to config['data']['encoded_data_path']
     encoded_data_path = cfg["data"]["encoded_data_path"]
@@ -90,7 +114,7 @@ def run_encoding_pipeline(
     logger.info(f"Saved encoded DataFrame CSV to: '{encoded_data_path}'")
 
     logger.info("=== Finished Encoding Pipeline Execution ===")
-    return df_encoded, column_types_updated
+    return df_encoded, column_types_updated, encoding_scheme
 
 
 if __name__ == "__main__":
@@ -111,7 +135,7 @@ if __name__ == "__main__":
         col_types = json.load(f)
 
     # Execute encoding pipeline
-    df_encoded, updated_col_types = run_encoding_pipeline(
+    df_encoded, updated_col_types, enc_scheme = run_encoding_pipeline(
         cfg, df_imputed, col_types
     )
 

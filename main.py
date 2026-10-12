@@ -1,8 +1,10 @@
 import warnings
 from src.data.load_data import run_data_load_pipeline
+from src.data.partition import run_data_partitioning
 from src.data.describe_data import run_data_description_pipeline
 from src.data.visualize import run_visualization_pipeline
 from src.data.missing_values import run_missing_value_pipeline
+from src.data.preprocessor import run_preprocessor
 from src.data.encode import run_encoding_pipeline
 from src.data.scaling import run_scaling_pipeline
 from src.utils.logger import get_logger
@@ -32,14 +34,20 @@ def main():
     # Visualize data
     run_visualization_pipeline(cfg, df, column_types)
 
-    # Missing value imputation
-    df, missing_imputation = run_missing_value_pipeline(cfg, df, column_types)
+    # Partitioning data
+    df_train, df_test = run_data_partitioning(cfg, df)
 
-    # Encoding
-    df, column_types = run_encoding_pipeline(cfg, df, column_types)
+    # Running preprocessing on training data
+    df_train_processed, preprocessor = run_preprocessor(cfg, df_train)
 
-    # Scaling
-    df, column_types, scaling_params = run_scaling_pipeline(cfg, df, column_types)
+    # Running preprocessing on test data
+    df_test_processed = preprocessor.transform(df_test)
+
+    # Fitting model on train data
+
+    # Getting predictions on test data
+
+    # Evaluating on test data
 
     logger.info("Machine Learning pipeline completed successfully!")
 
