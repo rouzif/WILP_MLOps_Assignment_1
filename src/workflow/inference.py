@@ -10,6 +10,7 @@ logger = get_logger(__name__)
 
 def inference_pipeline():
 
+    logger.info("\n\n")
     logger.info("Starting Machine Learning Inference pipeline!\n\n")
     warnings.filterwarnings("ignore")
 

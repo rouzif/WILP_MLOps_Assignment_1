@@ -15,6 +15,7 @@ logger = get_logger(__name__)
 
 def training_pipeline():
 
+    logger.info("\n\n")
     logger.info("Starting Machine Learning Training pipeline!\n\n")
     warnings.filterwarnings("ignore")
 
