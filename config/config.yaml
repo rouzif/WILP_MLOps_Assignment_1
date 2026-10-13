@@ -16,9 +16,17 @@ data:
   train_data_path: 'data/train_data.csv'
   test_data_path: 'data/test_data.csv'
   preprocessor_path: 'data/preprocessor.joblib'
+  predicted_path_suffix: 'data/predicted_'
 
 variables:
   target: 'heart_disease_flag'
 
 partition:
   test_ratio: 0.3
+
+model:
+  algo: 'rf'  # Choose from 'rf' - For Random Forest, 'xgb' - For XGBoost
+  custom_feature_fit: False
+  custom_feature_list: ['age']
+  model_path: 'model/model.joblib'
+

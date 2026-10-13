@@ -1,15 +1,15 @@
-import pandas as pd
 import json
+import pandas as pd
 from src.utils.config import load_config
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
 
-def describe_data(df: pd.DataFrame) -> dict[str, list[str]]:
+def describe_data(df: pd.DataFrame, target_var: str = '') -> dict[str, list[str]]:
     """Logs data types, column categories, summary stats, and percentage distributions,
 
-    returning a dictionary of categorized columns.
+    returning a dictionary of categorized columns (excluding target_var).
     """
     logger.info("=== Starting Data Description ===")
 
@@ -26,9 +26,13 @@ def describe_data(df: pd.DataFrame) -> dict[str, list[str]]:
         "text": [],
     }
 
-    # 2. Categorise columns and log category for each
+    # 2. Categorise columns and log category for each (excluding target_var)
     logger.info("--- Column Categorization ---")
     for col in df.columns:
+        if target_var and col == target_var:
+            logger.info(f"Column: '{col}' | Target variable detected -> Excluding from feature column categories.")
+            continue
+
         n_unique = df[col].nunique(dropna=True)
         is_numeric = pd.api.types.is_numeric_dtype(df[col])
 
@@ -50,10 +54,7 @@ def describe_data(df: pd.DataFrame) -> dict[str, list[str]]:
 
     # 3. Log min, 25%, median, 75%, max for numeric columns
     logger.info("--- Summary Statistics for Numeric Columns ---")
-    numeric_cols = (
-        column_categories["numeric-low-cardinality"]
-        + column_categories["numeric-distributed"]
-    )
+    numeric_cols = [col for col in df.columns if pd.api.types.is_numeric_dtype(df[col])]
 
     if numeric_cols:
         quantiles = df[numeric_cols].quantile([0.0, 0.25, 0.50, 0.75, 1.0])
@@ -99,8 +100,11 @@ def run_data_description_pipeline(cfg: dict, df: pd.DataFrame) -> dict[str, list
     logger.info("\n\n")
     logger.info("=== Running Data Description Pipeline ===")
 
+    # Retrieve target variable safely from config
+    target_var = cfg.get("variables", {}).get("target", cfg.get("target_var", ""))
+
     # Getting descriptions and column category
-    column_categories = describe_data(df)
+    column_categories = describe_data(df, target_var)
 
     # Writing column category
     with open(cfg['data']['column_category_path'], "w", encoding="utf-8") as f:
@@ -121,4 +125,3 @@ if __name__ == "__main__":
 
     # Getting descriptions and column category
     column_categories = run_data_description_pipeline(cfg, df)
-

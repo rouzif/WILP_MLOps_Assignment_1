@@ -3,10 +3,9 @@ from src.data.load_data import run_data_load_pipeline
 from src.data.partition import run_data_partitioning
 from src.data.describe_data import run_data_description_pipeline
 from src.data.visualize import run_visualization_pipeline
-from src.data.missing_values import run_missing_value_pipeline
 from src.data.preprocessor import run_preprocessor
-from src.data.encode import run_encoding_pipeline
-from src.data.scaling import run_scaling_pipeline
+from src.model.train_model import run_training_pipeline
+from src.model.predict import run_prediction_pipeline
 from src.utils.logger import get_logger
 from src.utils.config import load_config
 
@@ -44,8 +43,11 @@ def main():
     df_test_processed = preprocessor.transform(df_test)
 
     # Fitting model on train data
+    model = run_training_pipeline(cfg, df_train_processed, preprocessor.column_types_updated_)
 
     # Getting predictions on test data
+    df_test_predictions = run_prediction_pipeline(cfg, df_test_processed, model, 'test')
+    df_train_predictions = run_prediction_pipeline(cfg, df_test_processed, model, 'train')
 
     # Evaluating on test data
 
