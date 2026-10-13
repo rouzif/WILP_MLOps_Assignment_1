@@ -6,6 +6,7 @@ from src.data.visualize import run_visualization_pipeline
 from src.data.preprocessor import run_preprocessor
 from src.model.train_model import run_training_pipeline
 from src.model.predict import run_prediction_pipeline
+from src.model.evaluation import run_evaluation_pipeline
 from src.utils.logger import get_logger
 from src.utils.config import load_config
 
@@ -47,9 +48,11 @@ def main():
 
     # Getting predictions on test data
     df_test_predictions = run_prediction_pipeline(cfg, df_test_processed, model, 'test')
-    df_train_predictions = run_prediction_pipeline(cfg, df_test_processed, model, 'train')
+    df_train_predictions = run_prediction_pipeline(cfg, df_train_processed, model, 'train')
 
-    # Evaluating on test data
+    # Evaluation
+    test_eval = run_evaluation_pipeline(cfg, df_test_predictions, 'test')
+    train_eval = run_evaluation_pipeline(cfg, df_train_predictions, 'train')
 
     logger.info("Machine Learning pipeline completed successfully!")
 

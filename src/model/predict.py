@@ -64,7 +64,7 @@ def run_prediction_pipeline(cfg: dict, df: pd.DataFrame, model: ClassifierMixin,
     df_predictions = get_predictions(df, model)
 
     # Save dataset to configured path with suffix tag
-    output_path = cfg['data']['predicted_path_suffix'] + f'{tag}.csv'
+    output_path = cfg['data']['predicted_path_prefix'] + f'{tag}.csv'
     df_predictions.to_csv(output_path, index=False)
     logger.info(f"Saved prediction results CSV to: '{output_path}'")
 

@@ -29,9 +29,12 @@ def clean_up() -> None:
         config["data"]["test_data_path"],
         config["data"]["preprocessor_path"],
         config["model"]["model_path"],
-        config["data"]["predicted_path_suffix"] + 'test.csv',
-        config["data"]["predicted_path_suffix"] + 'train.csv',
-        config["data"]["predicted_path_suffix"] + '.csv',
+        config["data"]["predicted_path_prefix"] + 'test.csv',
+        config["data"]["predicted_path_prefix"] + 'train.csv',
+        config["data"]["predicted_path_prefix"] + '.csv',
+        config["model"]["eval_path_prefix"] + 'test.json',
+        config["model"]["eval_path_prefix"] + 'train.json',
+        config["model"]["eval_path_prefix"] + '.json',
     ]
 
     for path_str in paths:
