@@ -2,6 +2,7 @@ import json
 import joblib
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.model_selection import GridSearchCV
 from src.utils.config import load_config
 from src.utils.logger import get_logger
 
@@ -33,15 +34,33 @@ def run_model_training(df: pd.DataFrame, feature_list: list, target_var: str, mo
     # Model instantiation and fitting
     if model_algo == "rf":
         logger.info("Fitting Random Forest Classifier...")
-        # TODO: Set random forest params using cross validation
-        model = RandomForestClassifier()
-        model.fit(X_train, y_train)
+        rf = RandomForestClassifier(random_state=42)
+        param_grid = {
+            "n_estimators": [50, 100, 200],
+            "max_depth": [None, 5, 10],
+            "min_samples_split": [2, 5],
+        }
+        grid_search = GridSearchCV(
+            estimator=rf, param_grid=param_grid, cv=5, scoring="roc_auc", n_jobs=-1
+        )
+        grid_search.fit(X_train, y_train)
+        logger.info(f"Best RF Parameters: {grid_search.best_params_}")
+        model = grid_search.best_estimator_
 
     elif model_algo == "xgb":
         logger.info("Fitting Gradient Boosting Classifier...")
-        # TODO: Set gradient boosting params using cross validation
-        model = GradientBoostingClassifier()
-        model.fit(X_train, y_train)
+        gb = GradientBoostingClassifier(random_state=42)
+        param_grid = {
+            "n_estimators": [50, 100, 200],
+            "learning_rate": [0.01, 0.1, 0.2],
+            "max_depth": [3, 5],
+        }
+        grid_search = GridSearchCV(
+            estimator=gb, param_grid=param_grid, cv=5, scoring="roc_auc", n_jobs=-1
+        )
+        grid_search.fit(X_train, y_train)
+        logger.info(f"Best Gradient Boosting Parameters: {grid_search.best_params_}")
+        model = grid_search.best_estimator_
 
     else:
         raise ValueError(
