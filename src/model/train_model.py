@@ -36,9 +36,9 @@ def run_model_training(df: pd.DataFrame, feature_list: list, target_var: str, mo
         logger.info("Fitting Random Forest Classifier...")
         rf = RandomForestClassifier(random_state=42)
         param_grid = {
-            "n_estimators": [50, 100, 200],
-            "max_depth": [None, 5, 10],
-            "min_samples_split": [2, 5],
+            "n_estimators": [200, 400],
+            "max_depth": [3, 5],
+            "min_samples_split": [5, 10],
         }
         grid_search = GridSearchCV(
             estimator=rf, param_grid=param_grid, cv=5, scoring="roc_auc", n_jobs=-1
@@ -51,7 +51,7 @@ def run_model_training(df: pd.DataFrame, feature_list: list, target_var: str, mo
         logger.info("Fitting Gradient Boosting Classifier...")
         gb = GradientBoostingClassifier(random_state=42)
         param_grid = {
-            "n_estimators": [50, 100, 200],
+            "n_estimators": [100, 200, 400],
             "learning_rate": [0.01, 0.1, 0.2],
             "max_depth": [3, 5],
         }
