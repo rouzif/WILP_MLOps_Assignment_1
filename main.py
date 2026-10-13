@@ -13,8 +13,9 @@ def main():
     parser.add_argument(
         "--pipeline",
         type=str,
-        required=True,
+        required=False,
         choices=["train", "infer"],
+        default="train",
         help="Specify which pipeline to execute: 'train' or 'infer'",
     )
 
@@ -27,8 +28,8 @@ def main():
         logger.info("Running Inference Pipeline...")
         inference_pipeline()
     else:
-        logger.error(f"Invalid pipeline option: {args.pipeline}. Running Training Pipeline...")
-        training_pipeline()
+        logger.error(f"Invalid pipeline option: {args.pipeline}.")
+        sys.exit(1)
 
     return None
 
