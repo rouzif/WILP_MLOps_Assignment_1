@@ -14,7 +14,6 @@ def clean_up() -> None:
 
     # List of configuration paths to clean up
     paths = [
-        config["data"]["input_data_path"],
         config["data"]["column_category_path"],
         config["data"]["visualisation_directory"],
         config["data"]["missing_imputation_path"],

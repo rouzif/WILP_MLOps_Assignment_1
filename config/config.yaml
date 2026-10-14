@@ -30,3 +30,7 @@ model:
   custom_feature_list: ['age']
   model_path: 'model/model.joblib'
   eval_path_prefix: 'model/eval_'
+
+ml_flow:
+  experiment: 'mlops-heart-disease-pred'
+  tracking_uri: 'sqlite:///data/mlflow.db'

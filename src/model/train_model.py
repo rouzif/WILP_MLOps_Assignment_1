@@ -46,6 +46,7 @@ def run_model_training(df: pd.DataFrame, feature_list: list, target_var: str, mo
         grid_search.fit(X_train, y_train)
         logger.info(f"Best RF Parameters: {grid_search.best_params_}")
         model = grid_search.best_estimator_
+        model_params = grid_search.best_params_
 
     elif model_algo == "xgb":
         logger.info("Fitting Gradient Boosting Classifier...")
@@ -61,6 +62,7 @@ def run_model_training(df: pd.DataFrame, feature_list: list, target_var: str, mo
         grid_search.fit(X_train, y_train)
         logger.info(f"Best Gradient Boosting Parameters: {grid_search.best_params_}")
         model = grid_search.best_estimator_
+        model_params = grid_search.best_params_
 
     else:
         raise ValueError(
@@ -68,17 +70,16 @@ def run_model_training(df: pd.DataFrame, feature_list: list, target_var: str, mo
         )
 
     logger.info("=== Model Training Completed Successfully ===")
-    return model
+    return model, model_params
 
 
-def run_training_pipeline(cfg: dict, df: pd.DataFrame, column_types: dict):
+def run_training_pipeline(cfg: dict, df: pd.DataFrame, column_types: dict, model_algo: str):
     """Executes the training pipeline, saves the model artifact to disk, and returns the model."""
     logger.info("\n\n")
     logger.info("=== Running Model Training Pipeline ===")
 
     # Retrieve target variable and model algorithm
     target_var = cfg["variables"]["target"]
-    model_algo = cfg["model"]["algo"]
 
     # Select feature list based on custom fit flag or column types
     if cfg["model"].get("custom_feature_fit", False):
@@ -93,7 +94,7 @@ def run_training_pipeline(cfg: dict, df: pd.DataFrame, column_types: dict):
         )
 
     # Call run_model_training function
-    model = run_model_training(df, feature_list, target_var, model_algo)
+    model, model_params = run_model_training(df, feature_list, target_var, model_algo)
 
     # Save trained model object to configured path
     model_path = cfg["model"]["model_path"]
@@ -101,7 +102,7 @@ def run_training_pipeline(cfg: dict, df: pd.DataFrame, column_types: dict):
     logger.info(f"Saved trained model artifact to: '{model_path}'")
 
     logger.info("=== Finished Model Training Pipeline Execution ===")
-    return model
+    return model, model_params
 
 
 if __name__ == "__main__":
@@ -124,6 +125,6 @@ if __name__ == "__main__":
         col_types = json.load(f)
 
     # Execute training pipeline
-    trained_model = run_training_pipeline(cfg, df_train, col_types)
+    trained_model, model_params = run_training_pipeline(cfg, df_train, col_types, 'rf')
 
     logger.info("Script execution completed successfully.")
