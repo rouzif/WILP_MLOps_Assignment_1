@@ -5,6 +5,7 @@ from src.data.partition import run_data_partitioning
 from src.data.describe_data import run_data_description_pipeline
 from src.data.visualize import run_visualization_pipeline
 from src.data.preprocessor import run_preprocessor, DataPreprocessor
+from src.model.register_model import register_model
 from src.model.train_model import run_training_pipeline
 from src.model.predict import run_prediction_pipeline
 from src.model.evaluation import run_evaluation_pipeline
@@ -91,7 +92,10 @@ def training_pipeline(run_id, algo):
 
         # Printing run details
         run = mlflow.active_run().info
-        print(f"Logged run {run.run_id[:8]} auc={test_eval['roc_auc']:.4f}")
+
+        # Registering model
+        logger.info(f"Logged run {run.run_id[:8]} auc={test_eval['roc_auc']:.4f}")
+        register_model(cfg)
 
     logger.info("Machine Learning Training pipeline completed successfully!")
 

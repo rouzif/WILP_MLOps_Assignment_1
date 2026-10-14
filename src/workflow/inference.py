@@ -1,6 +1,7 @@
 import warnings
 import joblib
 import pandas as pd
+import mlflow
 from src.model.predict import run_prediction_pipeline
 from src.utils.logger import get_logger
 from src.utils.config import load_config
@@ -17,6 +18,11 @@ def inference_pipeline():
     # Loading config
     cfg = load_config()
 
+    # Loading model and preprocessor
+    mlflow.set_tracking_uri(cfg['ml_flow']['tracking_uri'])
+    model = mlflow.sklearn.load_model("models:/heart-disease-classifier@champion")
+    preprocessor = mlflow.sklearn.load_model("models:/heart-disease-preprocessor@champion")
+
     # Read input and converting to dataframe
     input_jsonl_path = cfg["data"].get(
         "inference_input_path", "data/prediction_input/sample_pred_input.jsonl"
@@ -24,18 +30,8 @@ def inference_pipeline():
     logger.info(f"Loading inference input data from: '{input_jsonl_path}'")
     df = pd.read_json(input_jsonl_path, lines=True)
 
-    # Load preprocessor joblib
-    preprocessor_path = cfg["data"]["preprocessor_path"]
-    logger.info(f"Loading preprocessor artifact from: '{preprocessor_path}'")
-    preprocessor = joblib.load(preprocessor_path)
-
     # Running preprocessing
     df_processed = preprocessor.transform(df)
-
-    # Load model file from cfg['model']['model_path']
-    model_path = cfg["model"]["model_path"]
-    logger.info(f"Loading trained model artifact from: '{model_path}'")
-    model = joblib.load(model_path)
 
     # Getting predictions
     df_test_predictions = run_prediction_pipeline(
