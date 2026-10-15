@@ -30,6 +30,7 @@ model:
   custom_feature_list: ['age']
   model_path: 'model/model.joblib'
   eval_path_prefix: 'model/eval_'
+  training_plots_path: 'model/training_plots/'
 
 ml_flow:
   experiment: 'mlops-heart-disease-pred'

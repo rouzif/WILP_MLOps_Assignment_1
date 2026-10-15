@@ -9,6 +9,7 @@ from src.model.register_model import register_model
 from src.model.train_model import run_training_pipeline
 from src.model.predict import run_prediction_pipeline
 from src.model.evaluation import run_evaluation_pipeline
+from src.model.training_plots import get_training_plots
 from src.utils.data_fingerprint import get_data_fingerprint
 from src.utils.logger import get_logger
 from src.utils.config import load_config
@@ -89,6 +90,17 @@ def training_pipeline(run_id, algo):
 
         # Logging metrics
         mlflow.log_metrics(combined_metrics)
+
+        # Getting model training plots
+        get_training_plots(
+            df_train_predictions['predicted_probability'],
+            df_train_predictions[cfg['variables']['target']],
+            model,
+            cfg['model']['training_plots_path']
+        )
+
+        # Log training plots in ML Flow
+        mlflow.log_artifacts(cfg['model']['training_plots_path'], artifact_path="plots")
 
         # Printing run details
         run = mlflow.active_run().info
