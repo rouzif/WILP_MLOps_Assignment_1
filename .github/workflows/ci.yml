@@ -71,7 +71,7 @@ jobs:
       with:
         name: mlflow-and-evaluation-plots
         path: |
-          model/training_plot/
+          model/training_plots/
           model/eval_test.json
           model/eval_train.json
           data/mlflow.db
