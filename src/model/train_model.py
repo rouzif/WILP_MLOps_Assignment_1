@@ -1,6 +1,7 @@
 import json
 import joblib
 import pandas as pd
+from pathlib import Path
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.model_selection import GridSearchCV
 from src.utils.config import load_config
@@ -98,6 +99,8 @@ def run_training_pipeline(cfg: dict, df: pd.DataFrame, column_types: dict, model
 
     # Save trained model object to configured path
     model_path = cfg["model"]["model_path"]
+    model_path = Path(model_path)
+    model_path.parent.mkdir(parents=True, exist_ok=True)
     joblib.dump(model, model_path)
     logger.info(f"Saved trained model artifact to: '{model_path}'")
 
