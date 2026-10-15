@@ -1,0 +1,78 @@
+name: Heart Disease Prediction CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-test-and-train:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Checkout repository code
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    # 2. Set up Python environment
+    - name: Set up Python 3.13.7
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.13.7"
+
+    # 3. Cache dependencies for faster pipeline execution
+    - name: Cache Pip Packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    # 4. Install project dependencies
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 pytest pytest-cov
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+    # 5. Step 1: Code Quality & Linting
+    - name: Run Flake8 Linting
+      run: |
+        # Stop build if there are critical Python syntax errors or undefined names
+        flake8 src/ tests/ --count --select=E9,F63,F7,F82 --show-source --statistics
+        # Exit-zero treats non-critical style warnings as informational
+        flake8 src/ tests/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+    # 6. Step 2: Execute Pytest Unit Tests
+    - name: Run Pytest Unit Tests
+      run: |
+        python -m pytest tests/ -v --cov=src --cov-report=term-missing
+
+    # 7. Step 3: Run Model Training Pipeline
+    - name: Run Training Pipeline
+      run: |
+        python -m main.py --pipeline train
+
+    # 8. Step 4: Upload Model & Preprocessor Artifacts
+    - name: Upload Trained Models & Preprocessor Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: model-and-preprocessor-artifacts
+        path: |
+          model/model.joblib
+          data/preprocessor.joblib
+        retention-days: 7
+
+    # 9. Step 5: Upload MLflow Tracking & Diagnostic Evaluation Plots
+    - name: Upload MLflow Logs & Evaluation Plots
+      uses: actions/upload-artifact@v4
+      with:
+        name: mlflow-and-evaluation-plots
+        path: |
+          model/training_plot/
+          model/eval_test.json
+          model/eval_train.json
+          data/mlflow.db
+        retention-days: 7
