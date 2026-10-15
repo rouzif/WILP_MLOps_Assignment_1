@@ -3,6 +3,8 @@
 import numpy as np
 import pandas as pd
 import pytest
+import json
+from pathlib import Path
 
 
 @pytest.fixture
@@ -54,3 +56,37 @@ def processed_sample_data():
             "heart_disease_flag": np.random.choice([0, 1], size=n),
         }
     )
+
+
+@pytest.fixture(autouse=True)
+def setup_column_category_file():
+    """Ensures data/column_category.json exists before executing preprocessor unit tests."""
+    data_dir = Path("data")
+    data_dir.mkdir(parents=True, exist_ok=True)
+
+    category_file = data_dir / "column_category.json"
+
+    # Minimal dummy schema matching describe_data format
+    col_categories = {
+        "numeric-low-cardinality": [
+            "sex",
+            "fbs",
+            "restecg",
+            "exang",
+            "slope",
+            "ca",
+            "thal",
+        ],
+        "numeric-distributed": ["age", "trestbps", "chol", "thalach", "oldpeak"],
+        "categorical": ["cp"],
+        "text": [],
+    }
+
+    with open(category_file, "w", encoding="utf-8") as f:
+        json.dump(col_categories, f, indent=4)
+
+    yield  # Run the unit tests
+
+    # Optional cleanup after tests complete
+    if category_file.exists():
+        category_file.unlink()
