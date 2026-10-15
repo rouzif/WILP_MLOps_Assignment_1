@@ -53,7 +53,7 @@ jobs:
     # 7. Step 3: Run Model Training Pipeline
     - name: Run Training Pipeline
       run: |
-        python -m main.py --pipeline train
+        python -m main --pipeline train
 
     # 8. Step 4: Upload Model & Preprocessor Artifacts
     - name: Upload Trained Models & Preprocessor Artifacts
