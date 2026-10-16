@@ -1,5 +1,7 @@
 from pydantic import BaseModel, Field
+import warnings
 
+warnings.filterwarnings("ignore")
 
 class HeartDataInput(BaseModel):
     """Pydantic model defining raw input features for Heart Disease prediction."""

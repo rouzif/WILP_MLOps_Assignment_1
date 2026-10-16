@@ -2,6 +2,7 @@ import joblib
 import mlflow
 import mlflow.sklearn
 import uvicorn
+import warnings
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, status
 from prometheus_fastapi_instrumentator import Instrumentator
@@ -12,6 +13,7 @@ from src.data.preprocessor import DataPreprocessor
 from src.utils.config import load_config
 from src.utils.logger import get_logger
 
+warnings.filterwarnings("ignore")
 logger = get_logger(__name__)
 
 # Global model state
