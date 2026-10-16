@@ -31,6 +31,7 @@ model:
   model_path: 'model/model.joblib'
   eval_path_prefix: 'model/eval_'
   training_plots_path: 'model/training_plots/'
+  champion_directory: 'model/champion/'
 
 ml_flow:
   experiment: 'mlops-heart-disease-pred'

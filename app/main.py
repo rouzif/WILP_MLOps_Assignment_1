@@ -3,6 +3,7 @@ import mlflow
 import mlflow.sklearn
 import uvicorn
 import warnings
+from pathlib import Path
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, status
 from prometheus_fastapi_instrumentator import Instrumentator
@@ -44,12 +45,25 @@ async def lifespan(app: FastAPI):
             logger.warning(
                 f"Failed to load from MLflow Model Registry ({e}). Falling back to local disk artifacts."
             )
-            prep_path = cfg["data"]["preprocessor_path"]
-            model_path = cfg["model"]["model_path"]
+            prep_path = Path(cfg["model"]["champion_directory"] + 'preprocessor/')
+            model_path = Path(cfg["model"]["champion_directory"] + 'model/')
 
-            ML_MODELS["preprocessor"] = joblib.load(prep_path)
-            ML_MODELS["model"] = joblib.load(model_path)
-            logger.info("Successfully loaded local artifacts from disk.")
+            # Option A: Load using mlflow.sklearn from local directory (Recommended for MLflow formats)
+            if prep_path.exists() and model_path.exists():
+                ML_MODELS["preprocessor"] = mlflow.sklearn.load_model(
+                    str(prep_path)
+                )
+                ML_MODELS["model"] = mlflow.sklearn.load_model(str(model_path))
+                logger.info("Successfully loaded artifacts from 'model/champion/'.")
+
+            # Option B: Direct joblib load if you saved single .joblib files inside model/champion/
+            else:
+                prep_joblib = cfg["model"]["champion_directory"] / "model.joblib"
+                model_joblib = cfg["model"]["champion_directory"] / "preprocessor.joblib"
+
+                ML_MODELS["preprocessor"] = joblib.load(prep_joblib)
+                ML_MODELS["model"] = joblib.load(model_joblib)
+                logger.info("Successfully loaded .joblib files from 'model/champion/'.")
 
     except Exception as err:
         logger.error(f"Critical error loading model artifacts: {err}", exc_info=True)
