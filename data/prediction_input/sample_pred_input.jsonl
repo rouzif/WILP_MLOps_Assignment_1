@@ -1,0 +1,3 @@
+{"id":  1, "age": 63, "sex": 1, "cp": 1, "trestbps": 145, "chol": 233, "fbs": 1, "restecg": 2, "thalach": 150, "exang": 0, "oldpeak": 2.3, "slope": 3, "ca": 0.0, "thal": 6.0, "heart_disease_flag": 0}
+{"id":  2, "age": 67, "sex": 1, "cp": 4, "trestbps": 160, "chol": 286, "fbs": 0, "restecg": 2, "thalach": 108, "exang": 1, "oldpeak": 1.5, "slope": 2, "ca": 3.0, "thal": 3.0, "heart_disease_flag": 1}
+{"id":  3, "age": 67, "sex": 1, "cp": 4, "trestbps": 120, "chol": 229, "fbs": 0, "restecg": 2, "thalach": 129, "exang": 1, "oldpeak": 2.6, "slope": 2, "ca": 2.0, "thal": 7.0, "heart_disease_flag": 1}

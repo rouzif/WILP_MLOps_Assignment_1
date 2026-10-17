@@ -1,0 +1,37 @@
+{
+    "numeric-low-cardinality": [
+        "sex",
+        "cp",
+        "fbs",
+        "restecg",
+        "exang",
+        "slope",
+        "ca",
+        "thal"
+    ],
+    "numeric-distributed": [
+        "age",
+        "trestbps",
+        "chol",
+        "thalach",
+        "oldpeak"
+    ],
+    "categorical": [],
+    "text": [],
+    "encoded": [
+        "sex_0",
+        "cp_1",
+        "cp_2",
+        "cp_3",
+        "fbs_0",
+        "restecg_0",
+        "exang_0",
+        "slope_1",
+        "slope_2",
+        "ca_0.0",
+        "ca_1.0",
+        "ca_2.0",
+        "thal_3.0",
+        "thal_6.0"
+    ]
+}

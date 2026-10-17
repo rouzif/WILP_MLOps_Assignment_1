@@ -1,10 +1,10 @@
 .venv
 .idea
 /logs/
-/data/
 /mlruns/
-/model/training_plots/
 /__pycache__/
+/data/mlflow.db
 *.pyc
 *.pyo
 *.pyd
+*.db
