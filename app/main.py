@@ -3,9 +3,10 @@ import mlflow
 import mlflow.sklearn
 import uvicorn
 import warnings
+import time
 from pathlib import Path
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, HTTPException, status
+from fastapi import FastAPI, HTTPException, status, Request
 from prometheus_fastapi_instrumentator import Instrumentator
 import pandas as pd
 
@@ -58,8 +59,8 @@ async def lifespan(app: FastAPI):
 
             # Option B: Direct joblib load if you saved single .joblib files inside model/champion/
             else:
-                prep_joblib = cfg["model"]["champion_directory"] / "model.joblib"
-                model_joblib = cfg["model"]["champion_directory"] / "preprocessor.joblib"
+                prep_joblib = Path(cfg["model"]["champion_directory"] / "model.joblib")
+                model_joblib = Path(cfg["model"]["champion_directory"] / "preprocessor.joblib")
 
                 ML_MODELS["preprocessor"] = joblib.load(prep_joblib)
                 ML_MODELS["model"] = joblib.load(model_joblib)
@@ -86,6 +87,46 @@ app = FastAPI(
 
 # Instrument Prometheus metrics endpoint (/metrics) for Task 8
 Instrumentator().instrument(app).expose(app)
+
+
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    """Intercepts incoming HTTP requests, measures execution time,
+
+    and logs operational request metadata.
+    """
+    start_time = time.time()
+
+    # Process the incoming request
+    response = await call_next(request)
+
+    # Calculate execution duration in milliseconds
+    process_time_ms = (time.time() - start_time) * 1000
+
+    # Retrieve request details
+    client_host = request.client.host if request.client else "unknown"
+    method = request.method
+    url_path = request.url.path
+    status_code = response.status_code
+
+    # Format log message
+    log_msg = (
+        f"Client: {client_host} | "
+        f"Method: {method} | "
+        f"Path: {url_path} | "
+        f"Status: {status_code} | "
+        f"Latency: {process_time_ms:.2f}ms"
+    )
+
+    if status_code >= 500:
+        logger.error(log_msg)
+    elif status_code >= 400:
+        logger.warning(log_msg)
+    else:
+        logger.info(log_msg)
+
+    return response
 
 
 @app.get("/health", status_code=status.HTTP_200_OK)
