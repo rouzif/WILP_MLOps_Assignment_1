@@ -1,0 +1,16 @@
+artifact_path: /Users/rouzif/Documents/WILP/Semester 3/MLOps/MLOps_Assignment_1/mlruns/1/models/m-6921f235db5d455490cbc66bf5d1d2a8/artifacts
+flavors:
+  sklearn:
+    code: null
+    pickled_model: model.skops
+    serialization_format: skops
+    sklearn_version: 1.9.1
+    skops_trusted_types:
+    - src.data.preprocessor.DataPreprocessor
+mlflow_version: 3.17.1
+model_id: m-6921f235db5d455490cbc66bf5d1d2a8
+model_size_bytes: 41309
+model_uuid: m-6921f235db5d455490cbc66bf5d1d2a8
+prompts: null
+run_id: 506063fe86ef42c1b88d8e03c12464e0
+utc_time_created: '2026-10-16 13:26:49.206675'

@@ -3,7 +3,7 @@
 /logs/
 /data/
 /mlruns/
-/model/
+/model/training_plots/
 /__pycache__/
 *.pyc
 *.pyo
