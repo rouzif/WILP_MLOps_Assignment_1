@@ -59,8 +59,8 @@ async def lifespan(app: FastAPI):
 
             # Option B: Direct joblib load if you saved single .joblib files inside model/champion/
             else:
-                prep_joblib = Path(cfg["model"]["champion_directory"] +  "/model.joblib")
-                model_joblib = Path(cfg["model"]["champion_directory"] +  "/preprocessor.joblib")
+                prep_joblib = Path(cfg["model"]["champion_directory"] +  "/preprocessor.joblib")
+                model_joblib = Path(cfg["model"]["champion_directory"] +  "/model.joblib")
 
                 ML_MODELS["preprocessor"] = joblib.load(prep_joblib)
                 ML_MODELS["model"] = joblib.load(model_joblib)
