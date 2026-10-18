@@ -1,4 +1,4 @@
-artifact_path: /Users/rouzif/Documents/WILP/Semester 3/MLOps/MLOps_Assignment_1/mlruns/1/models/m-71ea56249f0e4a79b7eb083fa4ecbc70/artifacts
+artifact_path: /Users/rouzif/Documents/WILP/Semester 3/MLOps/MLOps_Assignment_1/mlruns/1/models/m-3c3ca0743c00447f9d8006ab66c927f8/artifacts
 flavors:
   python_function:
     env:
@@ -16,9 +16,9 @@ flavors:
     skops_trusted_types:
     - sklearn.tree._tree.Tree
 mlflow_version: 3.17.1
-model_id: m-71ea56249f0e4a79b7eb083fa4ecbc70
+model_id: m-3c3ca0743c00447f9d8006ab66c927f8
 model_size_bytes: 7048750
-model_uuid: m-71ea56249f0e4a79b7eb083fa4ecbc70
+model_uuid: m-3c3ca0743c00447f9d8006ab66c927f8
 prompts: null
-run_id: 506063fe86ef42c1b88d8e03c12464e0
-utc_time_created: '2026-10-16 13:26:54.177439'
+run_id: 5b8a8cca660044ffb55954ebcedecbbe
+utc_time_created: '2026-10-18 13:43:54.459363'
